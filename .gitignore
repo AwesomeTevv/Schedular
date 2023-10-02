@@ -4,3 +4,4 @@ Schedulers/mlfq
 Schedulers/stcf
 Schedulers/template
 Schedulers/template_error.txt
+.vscode
