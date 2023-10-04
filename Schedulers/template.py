@@ -13,6 +13,9 @@ class Process:
         self.arrival_time = arrival_time
         self.io_frequency = io_frequency
 
+    def toString(self):
+        return f"Name: {self.name}\nDuration: {self.duration}\nArrival Time: {self.arrival_time}\nI/O Frequency: {self.io_frequency}\n"
+
 
 def main():
     # Check if the correct number of arguments is provided
@@ -23,7 +26,7 @@ def main():
 
     # Extract the input file name from the command line arguments
     input_file_name = f"Process_List/{config['dataset']}/{sys.argv[1]}"
-    print(input_file_name)  #! Temp -- REMOVE
+    # print(f"input filename: {input_file_name}")  #! Temp -- REMOVE
 
     # Define the number of processes
     num_processes = 0
@@ -54,7 +57,23 @@ def main():
     TODO Your Algorithm - assign your output to the output variable
     """
 
-    output = "AB AC AB !AD BA CB !BL BX AB"  # Example output
+    # output = "AB AC AB !AD BA CB !BL BX AB"  # Example output
+
+    output = ""
+    for process in data_set:
+        # print(data.toString())
+        name = process.name
+        duration = int(process.duration)
+        arrival_time = int(process.arrival_time)
+        io_frequency = int(process.io_frequency)
+
+        for i in range(1, duration):
+            output += name + " "
+            if io_frequency != 0:
+                if i % io_frequency == 0:
+                    output += "!" + name + " "
+
+        output += name + " "
 
     """
     End of your algorithm
