@@ -88,50 +88,49 @@ def main():
             output += name + " "
 
     if stcf:
-        print(
-            f"""
---------------------------------------------------------------
-Scheduling Scheme: Shortest Time to Completion First (stcf)
-Input File:        {input_file_name}
---------------------------------------------------------------
-              
-              """
-        )
+        print("Shortest Time to Completion First")
+        p_count = {}
 
-        times = []
-        for key in processes:
-            process = processes[key]
-            times.append(process.arrival_time)
+        total_duration = 0
+        for process in data_set:
+            total_duration += process.duration
+            p_count[process.name] = 0
 
-        arrival_times = {t: [] for t in times}
+        arrivals = {time: [] for time in range(total_duration)}
 
-        for key in processes:
-            process = processes[key]
-            arrival_times[process.arrival_time].append(process.name)
+        for process in data_set:
+            time = int(process.arrival_time)
+            arrivals[time].append(process)
 
-        queue = []
+        frontier = []
+        for t in range(total_duration):
+            add = arrivals[t]
+            frontier.extend(add)
 
-        for at in arrival_times:
-            added = arrival_times[at]
+            duration = 999999999
+            best_proc = ""
+            for process in frontier:
+                if int(process.duration) < duration:
+                    duration = int(process.duration)
+                    best_proc = process.name
 
-            while len(added) != 0:
-                best_time = 999999
-                best_proc = ""
+            process = processes[best_proc]
+            name = process.name
+            io_frequency = int(process.io_frequency)
 
-                for proc in added:
-                    process = processes[proc]
+            p_count[best_proc] += 1
+            if duration == 1:
+                output += name + " "
+            else:
+                output += name + " "
+                if io_frequency != 0:
+                    if p_count[best_proc] % io_frequency == 0:
+                        output += "!" + name + " "
 
-                    completion_time = process.arrival_time + process.duration
+            if duration - 1 == 0:
+                frontier.remove(process)
 
-                    if completion_time < best_time:
-                        best_time = completion_time
-                        best_proc = proc
-
-                queue.append(best_proc)
-                added.remove(best_proc)
-
-            for q in queue:
-                print()
+            process.duration = str(duration - 1)
 
     if mlfq:
         print("Multi-Level Frequency Queue")
