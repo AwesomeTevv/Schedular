@@ -56,21 +56,85 @@ def main():
     TODO Your Algorithm - assign your output to the output variable
     """
 
-    output = ""
+    """
+    * Pre-Processing the Data Set into a Dictionary
+    """
+    processes = {}
     for process in data_set:
-        # print(data.toString())
         name = process.name
-        duration = int(process.duration)
-        arrival_time = int(process.arrival_time)
-        io_frequency = int(process.io_frequency)
+        processes[name] = process
 
-        for i in range(1, duration):
+    fcfs = False
+    stcf = True
+    mlfq = False
+
+    output = ""
+
+    if fcfs:
+        print("First Come, First Served")
+        for process in data_set:
+            # print(data.toString())
+            name = process.name
+            duration = int(process.duration)
+            arrival_time = int(process.arrival_time)
+            io_frequency = int(process.io_frequency)
+
+            for i in range(1, duration):
+                output += name + " "
+                if io_frequency != 0:
+                    if i % io_frequency == 0:
+                        output += "!" + name + " "
+
             output += name + " "
-            if io_frequency != 0:
-                if i % io_frequency == 0:
-                    output += "!" + name + " "
 
-        output += name + " "
+    if stcf:
+        print(
+            f"""
+--------------------------------------------------------------
+Scheduling Scheme: Shortest Time to Completion First (stcf)
+Input File:        {input_file_name}
+--------------------------------------------------------------
+              
+              """
+        )
+
+        times = []
+        for key in processes:
+            process = processes[key]
+            times.append(process.arrival_time)
+
+        arrival_times = {t: [] for t in times}
+
+        for key in processes:
+            process = processes[key]
+            arrival_times[process.arrival_time].append(process.name)
+
+        queue = []
+
+        for at in arrival_times:
+            added = arrival_times[at]
+
+            while len(added) != 0:
+                best_time = 999999
+                best_proc = ""
+
+                for proc in added:
+                    process = processes[proc]
+
+                    completion_time = process.arrival_time + process.duration
+
+                    if completion_time < best_time:
+                        best_time = completion_time
+                        best_proc = proc
+
+                queue.append(best_proc)
+                added.remove(best_proc)
+
+            for q in queue:
+                print()
+
+    if mlfq:
+        print("Multi-Level Frequency Queue")
 
     """
     End of your algorithm
