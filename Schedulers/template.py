@@ -1,8 +1,9 @@
 import sys
 import json
 
-with open('config.json', 'r') as config_file:
+with open("config.json", "r") as config_file:
     config = json.load(config_file)
+
 
 # Define the process data clas
 class Process:
@@ -12,14 +13,17 @@ class Process:
         self.arrival_time = arrival_time
         self.io_frequency = io_frequency
 
+
 def main():
     # Check if the correct number of arguments is provided
     import sys
+
     if len(sys.argv) != 2:
         return 1
 
     # Extract the input file name from the command line arguments
     input_file_name = f"Process_List/{config['dataset']}/{sys.argv[1]}"
+    print(input_file_name)  #! Temp -- REMOVE
 
     # Define the number of processes
     num_processes = 0
@@ -36,28 +40,25 @@ def main():
             # Read process data from the file and populate the data_set list
             for _ in range(num_processes):
                 line = file.readline().strip()
-                name, duration, arrival_time, io_frequency = line.split(',')
-                process = Process(name, int(duration), int(arrival_time), int(io_frequency))
+                name, duration, arrival_time, io_frequency = line.split(",")
+                process = Process(
+                    name, int(duration), int(arrival_time), int(io_frequency)
+                )
                 data_set.append(process)
 
     except FileNotFoundError:
         print("Error opening the file.")
         return 1
 
-
     """
     TODO Your Algorithm - assign your output to the output variable
     """
 
-
-    output = "AB AC AB !AD BA CB !BL BX AB" #Example output
-
+    output = "AB AC AB !AD BA CB !BL BX AB"  # Example output
 
     """
     End of your algorithm
     """
-
-    
 
     # Open a file for writing
     try:
@@ -71,6 +72,7 @@ def main():
         return 1
 
     return 0
+
 
 if __name__ == "__main__":
     exit_code = main()

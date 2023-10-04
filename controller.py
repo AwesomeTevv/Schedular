@@ -43,9 +43,9 @@ for scheduler in schedulers:
             + "-"
             + os.popen("python marker.py " + file + " " + scheduler).read().strip()
         )
-        print(f"out:\t\t{out}")  #! Temporary -- REMOVE WHEN DONE
+        # print(f"out:\t\t{out}")  #! Temporary -- REMOVE WHEN DONE
         out_data = out.split("-")
-        print(f"out_data:\t{out_data}\n")  #! Temporary -- REMOVE WHEN DONE
+        # print(f"out_data:\t{out_data}\n")  #! Temporary -- REMOVE WHEN DONE
 
         # Check if the scheduler is correct
         if out_data[2] == "":
