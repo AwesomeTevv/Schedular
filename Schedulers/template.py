@@ -96,16 +96,19 @@ def main():
             total_duration += process.duration
             p_count[process.name] = 0
 
-        arrivals = {time: [] for time in range(total_duration)}
+        arrivals = {time: set() for time in range(total_duration)}
 
         for process in data_set:
             time = int(process.arrival_time)
-            arrivals[time].append(process)
+            arrivals[time].add(process)
 
-        frontier = []
-        for t in range(total_duration):
+        frontier = set()
+        t = 0
+        frontier.update(arrivals[t])
+
+        while len(frontier) != 0:
             add = arrivals[t]
-            frontier.extend(add)
+            frontier.update(add)
 
             duration = 999999999
             best_proc = ""
@@ -131,6 +134,8 @@ def main():
                 frontier.remove(process)
 
             process.duration = str(duration - 1)
+
+            t += 1
 
     if mlfq:
         print("Multi-Level Frequency Queue")
