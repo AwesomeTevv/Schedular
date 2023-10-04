@@ -26,7 +26,6 @@ def main():
 
     # Extract the input file name from the command line arguments
     input_file_name = f"Process_List/{config['dataset']}/{sys.argv[1]}"
-    # print(f"input filename: {input_file_name}")  #! Temp -- REMOVE
 
     # Define the number of processes
     num_processes = 0
@@ -56,8 +55,6 @@ def main():
     """
     TODO Your Algorithm - assign your output to the output variable
     """
-
-    # output = "AB AC AB !AD BA CB !BL BX AB"  # Example output
 
     output = ""
     for process in data_set:
