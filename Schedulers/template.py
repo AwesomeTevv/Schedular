@@ -65,7 +65,9 @@ def main():
         processes[name] = process
 
     fcfs = False
+    sjf = False
     stcf = True
+    rr = False
     mlfq = False
 
     output = ""
@@ -87,8 +89,8 @@ def main():
 
             output += name + " "
 
-    if stcf:
-        print("Shortest Time to Completion First")
+    if sjf:
+        print("Shortest Job First")
         p_count = {}
 
         total_duration = 0
@@ -136,6 +138,99 @@ def main():
             process.duration = str(duration - 1)
 
             t += 1
+
+    if stcf:
+        print("Shortest Time to Completion First")
+        p_count = {}
+
+        total_duration = 0
+        for process in data_set:
+            total_duration += process.duration
+            p_count[process.name] = 0
+
+        arrivals = {time: set() for time in range(total_duration)}
+
+        for process in data_set:
+            time = int(process.arrival_time)
+            arrivals[time].add(process)
+
+        frontier = set()
+        t = 0
+        frontier.update(arrivals[t])
+
+        while len(frontier) != 0:
+            add = arrivals[t]
+            frontier.update(add)
+
+            best_completion = 999999999
+            best_proc = ""
+            for process in frontier:
+                completion = int(process.arrival_time) + int(process.duration)
+                if completion < best_completion:
+                    best_completion = completion
+                    best_proc = process.name
+
+            process = processes[best_proc]
+            name = process.name
+            io_frequency = int(process.io_frequency)
+
+            p_count[best_proc] += 1
+            if int(process.duration) == 1:
+                output += name + " "
+            else:
+                output += name + " "
+                if io_frequency != 0:
+                    if p_count[best_proc] % io_frequency == 0:
+                        output += "!" + name + " "
+
+            if int(process.duration) - 1 == 0:
+                frontier.remove(process)
+
+            process.duration = str(int(process.duration) - 1)
+
+            t += 1
+
+    if rr:
+        print("Round Robin")
+        p_count = {}
+
+        total_duration = 0
+        for process in data_set:
+            total_duration += process.duration
+            p_count[process.name] = 0
+
+        arrivals = {time: [] for time in range(total_duration)}
+
+        for process in data_set:
+            time = int(process.arrival_time)
+            arrivals[time].append(process)
+
+        frontier = []
+
+        for t in range(total_duration):
+            add = arrivals[t]
+            frontier.extend(add)
+
+            for process in frontier:
+                name = process.name
+                duration = int(process.duration)
+                arrival_time = int(process.arrival_time)
+                io_frequency = int(process.io_frequency)
+
+                p_count[name] += 1
+
+                if duration == 1:
+                    output += name + " "
+                else:
+                    output += name + " "
+                    if io_frequency != 0:
+                        if p_count[name] % io_frequency == 0:
+                            output += "!" + name + " "
+
+                if duration - 1 == 0:
+                    frontier.remove(process)
+
+                process.duration = str(duration - 1)
 
     if mlfq:
         print("Multi-Level Frequency Queue")
