@@ -143,12 +143,12 @@ def main():
                 q0.remove(process)
                 q0.append(process)
 
-        for process in q0:
-            if process != current:
-                lowest_frequency[process] += 1
-                if lowest_frequency[process] >= priority_boost:
-                    q0.remove(process)
-                    q2.append(process)
+        # for process in q0:
+        #     if process != current:
+        #         lowest_frequency[process] += 1
+        #         if lowest_frequency[process] >= priority_boost:
+        #             q0.remove(process)
+        #             q2.append(process)
 
         t += 1
 
