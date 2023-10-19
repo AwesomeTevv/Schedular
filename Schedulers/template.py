@@ -56,184 +56,84 @@ def main():
     TODO Your Algorithm - assign your output to the output variable
     """
 
-    """
-    * Pre-Processing the Data Set into a Dictionary
-    """
-    processes = {}
-    for process in data_set:
-        name = process.name
-        processes[name] = process
-
-    fcfs = False
-    sjf = False
-    stcf = True
-    rr = False
-    mlfq = False
+    print("Multi-Level Frequency Queue")
 
     output = ""
 
-    if fcfs:
-        print("First Come, First Served")
-        for process in data_set:
-            # print(data.toString())
-            name = process.name
-            duration = int(process.duration)
-            arrival_time = int(process.arrival_time)
-            io_frequency = int(process.io_frequency)
+    priority_boost = 4
+    quantums = [1, 2, 3]
 
-            for i in range(1, duration):
-                output += name + " "
-                if io_frequency != 0:
-                    if i % io_frequency == 0:
-                        output += "!" + name + " "
+    q2 = []
+    q1 = []
+    q0 = []
 
-            output += name + " "
+    frequency = {process: 0 for process in data_set}
+    lowest_frequency = {process: 0 for process in data_set}
 
-    if sjf:
-        print("Shortest Job First")
-        p_count = {}
+    q2_freq = {process: 0 for process in data_set}
+    q1_freq = {process: 0 for process in data_set}
+    q0_freq = {process: 0 for process in data_set}
 
-        total_duration = 0
-        for process in data_set:
-            total_duration += process.duration
-            p_count[process.name] = 0
+    total_duration = 0
+    for process in data_set:
+        total_duration += process.duration
 
-        arrivals = {time: set() for time in range(total_duration)}
+    arrivals = {time: [] for time in range(total_duration)}
 
-        for process in data_set:
-            time = int(process.arrival_time)
-            arrivals[time].add(process)
+    for process in data_set:
+        arrivals[process.arrival_time].append(process)
 
-        frontier = set()
-        t = 0
-        frontier.update(arrivals[t])
+    t = 0
+    while t != total_duration:
+        add = arrivals[t]
+        q2.extend(add)
 
-        while len(frontier) != 0:
-            add = arrivals[t]
-            frontier.update(add)
+        if len(q2) != 0:
+            # Round robin of Queue 2
+            print("Queue 2")
 
-            duration = 999999999
-            best_proc = ""
-            for process in frontier:
-                if int(process.duration) < duration:
-                    duration = int(process.duration)
-                    best_proc = process.name
+            for process in q2:
+                output += process.name + " "
+                frequency[process] += 1
+                if frequency[process] == process.duration:
+                    q2.remove(process)
+                q2_freq[process] += 1
+                if q2_freq[process] == quantums[0]:
+                    q2.remove(process)
+                    q1.append(process)
 
-            process = processes[best_proc]
-            name = process.name
-            io_frequency = int(process.io_frequency)
+                break
+        elif len(q1) != 0:
+            # Round robin of Queue 1
+            print("Queue 1")
 
-            p_count[best_proc] += 1
-            if duration == 1:
-                output += name + " "
-            else:
-                output += name + " "
-                if io_frequency != 0:
-                    if p_count[best_proc] % io_frequency == 0:
-                        output += "!" + name + " "
+            for process in q1:
+                output += process.name + " "
+                frequency[process] += 1
+                if frequency[process] == process.duration:
+                    q1.remove(process)
+                q1_freq[process] += 1
+                if q1_freq[process] == quantums[1]:
+                    q1.remove(process)
+                    q0.append(process)
 
-            if duration - 1 == 0:
-                frontier.remove(process)
+                break
+        else:
+            # Round robin of Queue 0
+            print("Queue 3")
 
-            process.duration = str(duration - 1)
+            for process in q0:
+                output += process.name + " "
+                frequency[process] += 1
+                if frequency[process] == process.duration:
+                    q0.remove(process)
+                q0_freq[process] += 1
+                if q0_freq[process] == quantums[2]:
+                    q0.remove(process)
+                    q0.append(process)
+                break
 
-            t += 1
-
-    if stcf:
-        print("Shortest Time to Completion First")
-        p_count = {}
-
-        total_duration = 0
-        for process in data_set:
-            total_duration += process.duration
-            p_count[process.name] = 0
-
-        arrivals = {time: set() for time in range(total_duration)}
-
-        for process in data_set:
-            time = int(process.arrival_time)
-            arrivals[time].add(process)
-
-        frontier = set()
-        t = 0
-        frontier.update(arrivals[t])
-
-        while len(frontier) != 0:
-            add = arrivals[t]
-            frontier.update(add)
-
-            best_completion = 999999999
-            best_proc = ""
-            for process in frontier:
-                completion = int(process.arrival_time) + int(process.duration)
-                if completion < best_completion:
-                    best_completion = completion
-                    best_proc = process.name
-
-            process = processes[best_proc]
-            name = process.name
-            io_frequency = int(process.io_frequency)
-
-            p_count[best_proc] += 1
-            if int(process.duration) == 1:
-                output += name + " "
-            else:
-                output += name + " "
-                if io_frequency != 0:
-                    if p_count[best_proc] % io_frequency == 0:
-                        output += "!" + name + " "
-
-            if int(process.duration) - 1 == 0:
-                frontier.remove(process)
-
-            process.duration = str(int(process.duration) - 1)
-
-            t += 1
-
-    if rr:
-        print("Round Robin")
-        p_count = {}
-
-        total_duration = 0
-        for process in data_set:
-            total_duration += process.duration
-            p_count[process.name] = 0
-
-        arrivals = {time: [] for time in range(total_duration)}
-
-        for process in data_set:
-            time = int(process.arrival_time)
-            arrivals[time].append(process)
-
-        frontier = []
-
-        for t in range(total_duration):
-            add = arrivals[t]
-            frontier.extend(add)
-
-            for process in frontier:
-                name = process.name
-                duration = int(process.duration)
-                arrival_time = int(process.arrival_time)
-                io_frequency = int(process.io_frequency)
-
-                p_count[name] += 1
-
-                if duration == 1:
-                    output += name + " "
-                else:
-                    output += name + " "
-                    if io_frequency != 0:
-                        if p_count[name] % io_frequency == 0:
-                            output += "!" + name + " "
-
-                if duration - 1 == 0:
-                    frontier.remove(process)
-
-                process.duration = str(duration - 1)
-
-    if mlfq:
-        print("Multi-Level Frequency Queue")
+        t += 1
 
     """
     End of your algorithm
