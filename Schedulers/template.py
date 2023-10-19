@@ -85,6 +85,8 @@ def main():
 
     t = 0
     while t != total_duration:
+        current = data_set[0]
+
         add = arrivals[t]
         q2.extend(add)
 
@@ -92,46 +94,61 @@ def main():
             # Round robin of Queue 2
             print("Queue 2")
 
-            for process in q2:
-                output += process.name + " "
-                frequency[process] += 1
-                if frequency[process] == process.duration:
-                    q2.remove(process)
-                q2_freq[process] += 1
-                if q2_freq[process] == quantums[0]:
-                    q2.remove(process)
-                    q1.append(process)
+            process = q2[0]
+            current = process
+            output += process.name + " "
+            frequency[process] += 1
+            if frequency[process] == process.duration:
+                q2.remove(process)
+            elif process.io_frequency != 0:
+                if frequency[process] % process.io_frequency == 0:
+                    output += "!" + process.name + " "
+            q2_freq[process] += 1
+            if q2_freq[process] == quantums[0]:
+                q2.remove(process)
+                q1.append(process)
 
-                break
         elif len(q1) != 0:
             # Round robin of Queue 1
             print("Queue 1")
 
-            for process in q1:
-                output += process.name + " "
-                frequency[process] += 1
-                if frequency[process] == process.duration:
-                    q1.remove(process)
-                q1_freq[process] += 1
-                if q1_freq[process] == quantums[1]:
-                    q1.remove(process)
-                    q0.append(process)
-
-                break
+            process = q1[0]
+            current = process
+            output += process.name + " "
+            frequency[process] += 1
+            if frequency[process] == process.duration:
+                q1.remove(process)
+            elif process.io_frequency != 0:
+                if frequency[process] % process.io_frequency == 0:
+                    output += "!" + process.name + " "
+            q1_freq[process] += 1
+            if q1_freq[process] == quantums[1]:
+                q1.remove(process)
+                q0.append(process)
         else:
             # Round robin of Queue 0
-            print("Queue 3")
+            print("Queue 0")
 
-            for process in q0:
-                output += process.name + " "
-                frequency[process] += 1
-                if frequency[process] == process.duration:
+            process = q0[0]
+            current = process
+            output += process.name + " "
+            frequency[process] += 1
+            if frequency[process] == process.duration:
+                q0.remove(process)
+            elif process.io_frequency != 0:
+                if frequency[process] % process.io_frequency == 0:
+                    output += "!" + process.name + " "
+            q0_freq[process] += 1
+            if q0_freq[process] == quantums[2]:
+                q0.remove(process)
+                q0.append(process)
+
+        for process in q0:
+            if process != current:
+                lowest_frequency[process] += 1
+                if lowest_frequency[process] >= priority_boost:
                     q0.remove(process)
-                q0_freq[process] += 1
-                if q0_freq[process] == quantums[2]:
-                    q0.remove(process)
-                    q0.append(process)
-                break
+                    q2.append(process)
 
         t += 1
 
