@@ -129,7 +129,14 @@ def main():
             # Round robin of Queue 0
             print("Queue 0")
 
-            process = q0[0]
+            process = data_set[0]
+            best_completion = 99999999
+            for ds in q0:
+                completion = abs(ds.duration - frequency[ds])
+                if completion < best_completion:
+                    best_completion = completion
+                    process = ds
+
             current = process
             output += process.name + " "
             frequency[process] += 1
