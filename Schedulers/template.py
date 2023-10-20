@@ -85,7 +85,6 @@ def main():
 
         if len(q2) != 0:
             # Round robin of Queue 2
-            print("Queue 2")
 
             process = q2[0]
             output += process.name + " "
@@ -101,9 +100,10 @@ def main():
             if q2_freq[process] == quantums[0]:
                 q2.remove(process)
                 q0.append(process)
+
+            print(f"Queue 2: {process.name}")
         else:
-            # Round robin of Queue 0
-            print("Queue 0")
+            # STCF of Queue 0
 
             process = data_set[0]
             best_completion = 99999999
@@ -121,6 +121,8 @@ def main():
             elif process.io_frequency != 0:
                 if frequency[process] % process.io_frequency == 0:
                     output += "!" + process.name + " "
+
+            print(f"Queue 0: {process.name}")
 
         t += 1
 
