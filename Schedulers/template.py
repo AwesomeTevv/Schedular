@@ -60,69 +60,65 @@ def main():
 
     output = ""
 
-    quantums = [1, 2, 3]
+    total_duration = 0  # Stores the total duration of all process durations combined
+    for process in data_set:
+        total_duration += (
+            process.duration
+        )  # Adding each process duration to the total duration
+    # At this point, total_duration stores the total scheduler runtime
 
-    q2 = []
-    q0 = []
+    outs = {process: [] for process in data_set}
+
+    of = {process: 0 for process in data_set}
+
+    for process in data_set:
+        for _ in range(process.duration):
+            outs[process].append(f"{process.name}")
+            of[process] += 1
+
+            if of[process] < process.duration:
+                if process.io_frequency != 0:
+                    if of[process] % process.io_frequency == 0:
+                        outs[process].append(f"!{process.name}")
 
     frequency = {process: 0 for process in data_set}
 
-    q2_freq = {process: 0 for process in data_set}
-
-    total_duration = 0
-    for process in data_set:
-        total_duration += process.duration
-
-    arrivals = {time: [] for time in range(total_duration)}
+    arrivals = {time: [] for time in range(total_duration * 2)}
 
     for process in data_set:
         arrivals[process.arrival_time].append(process)
 
+    frontier = []
+
     t = 0
-    while t != total_duration:
-        add = arrivals[t]
-        q2.extend(add)
+    while True:
+        mlfq = False
 
-        if len(q2) != 0:
-            # Round robin of Queue 2
+        frontier.extend(arrivals[t])
 
-            process = q2[0]
-            output += process.name + " "
-            frequency[process] += 1
+        chosen = data_set[0]
 
-            if frequency[process] == process.duration:
-                q2.remove(process)
-            elif process.io_frequency != 0:
-                if frequency[process] % process.io_frequency == 0:
-                    output += "!" + process.name + " "
+        for process in frontier:
+            if frequency[process] == 0:
+                chosen = process
+                mlfq = True
+                break
 
-            q2_freq[process] += 1
-            if q2_freq[process] == quantums[0]:
-                q2.remove(process)
-                q0.append(process)
+        if mlfq == False:
+            best_duration = 9999
+            for process in frontier:
+                if len(outs[process]) < best_duration:
+                    best_duration = len(outs[process])
+                    chosen = process
 
-            print(f"Queue 2: {process.name}")
-        else:
-            # STCF of Queue 0
+        output += f"{outs[chosen].pop(0)} "
+        frequency[chosen] += 1
 
-            process = data_set[0]
-            best_completion = 99999999
-            for ds in q0:
-                completion = abs(ds.duration - frequency[ds])
-                if completion < best_completion:
-                    best_completion = completion
-                    process = ds
+        if len(outs[chosen]) == 0:
+            frontier.remove(chosen)
 
-            output += process.name + " "
-            frequency[process] += 1
-
-            if frequency[process] == process.duration:
-                q0.remove(process)
-            elif process.io_frequency != 0:
-                if frequency[process] % process.io_frequency == 0:
-                    output += "!" + process.name + " "
-
-            print(f"Queue 0: {process.name}")
+        if len(frontier) == 0:
+            break
 
         t += 1
 
