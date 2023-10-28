@@ -56,8 +56,6 @@ def main():
     TODO Your Algorithm - assign your output to the output variable
     """
 
-    print("Multi-Level Frequency Queue")
-
     output = ""
 
     total_duration = 0  # Stores the total duration of all process durations combined
